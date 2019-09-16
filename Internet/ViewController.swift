@@ -8,6 +8,8 @@
 
 import UIKit
 import Alamofire
+import AlamofireImage
+import Kingfisher
 
 class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     
@@ -22,8 +24,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        Conexión a la URL del JSON
-        AF.request("https://getapp.mawetecnologias.com/api/contactos").responseJSON { response in
+//        Conexión a la URL del JSON debe ser HTTPS por regla de seguridad
+        Alamofire.request("https://getapp.mawetecnologias.com/api/contactos", method: .get, parameters: nil, headers: nil).responseJSON { response in
             
 //            si la respuesta es success trabajamos con ello
             switch response.result {
@@ -43,7 +45,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                                 self.contactos.append(nuevoContacto)
                             }
                         }
-                        //                      IMPORTANTE: al finalizar el arreglo DEBEMOS actualizar la tabla, si no, los elementos no aparecen
+                        //  IMPORTANTE: al finalizar el arreglo DEBEMOS actualizar la tabla, si no, los elementos no aparecen
                         self.tvTablaContactos.reloadData()
                     }
                 }
@@ -65,6 +67,25 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let celdaContacto = tableView.dequeueReusableCell(withIdentifier: "cellContacto") as! CeldaContactoController
         
         celdaContacto.lblContacto.text = contactos[indexPath.row].nombre
+        
+        /* if let urlImage = contactos[indexPath.row].urlImagen as? String {
+           Alamofire.request("https://getapp.mawetecnologias.com/" + urlImage).responseImage(completionHandler: { (response) in
+                print(response)
+                
+           /* if let image = response.result.value {
+                DispatchQueue.main.async {
+                celdaContacto.imgContacto.image = image
+                    }
+                } */
+                
+            })
+        
+        } */
+        
+        let nombreImagen = contactos[indexPath.row].urlImagen
+        
+        let url = URL(string: "https://getapp.mawetecnologias.com/\(nombreImagen)")
+        celdaContacto.imgContacto.kf.setImage(with: url)
         
         return celdaContacto
     }

@@ -15,3 +15,4 @@ class CeldaContactoController : UITableViewCell {
     @IBOutlet weak var imgContacto: UIImageView!
     
 }
+
